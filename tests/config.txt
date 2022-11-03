@@ -7,9 +7,9 @@ CheckerEnable
 	immediate_uaf_checker = true
 	loop_doublefree_checker = true
 	PointToAnalysis = true
-	borrowed_reference_checker = true
+	borrowed_reference_checker = false
 	realloc_checker = true
-	memory_alloc_checker = true
+	memory_alloc_checker = false
 }
 
 PrintLog
@@ -19,9 +19,9 @@ PrintLog
 	stack_uaf_checker = true
 	immediate_uaf_checker = true
 	loop_doublefree_checker = true
-	borrowed_reference_checker = true
+	borrowed_reference_checker = false
 	realloc_checker = true
-	memory_alloc_checker = true
+	memory_alloc_checker = false
 }
 
 Framework
