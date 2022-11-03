@@ -10,7 +10,7 @@ Our tool includes a framework for Abstract Syntax Tree (AST) and Control Flow Gr
     4. `realloc_checker`: checks if size == 0 is called when calling `realloc(p, size)`. (minor adjustment to report `resize(0)`, too many FP in `resize(0)` though.)
     5. `borrowed_reference_checker`: reports unsafe borrowed reference errors in Cpython.
     6. `memory_alloc_checker`: detect `malloc(0)` and `calloc(0, size_t size)`. `malloc(0)` could be problematic when it returns a valid address. This checker is recommended off in [config.txt](./tests/config.txt). 
-    7. other API errors: those APIs are application-specific, for example, [CPython bug in array.fromstring](https://bugs.python.org/issue24613) and [CPython bug in PySlice_GetIndicesEx](https://bugs.python.org/issue27867).
+    7. other API errors: those APIs are application-specific, for example, [array.fromstring in CPython](https://bugs.python.org/issue24613) and [PySlice_GetIndicesEx in CPython](https://bugs.python.org/issue27867).
     
 2.  Other functions:
 
@@ -18,11 +18,11 @@ Our tool includes a framework for Abstract Syntax Tree (AST) and Control Flow Gr
     2. the API of `borrowed_reference_checker` could be reconfigured in [config.txt](./tests/config.txt). 
     3. Point-to analysis: this function helps find more UaF but inaccurate point-to analysis would also lead to more false positives.
 
-About memory allocation function:
+**About memory allocation function:**
 
 `realloc()` can exhibit three behaviors from the perspective of function callers: (1) simply expand the original memory block "in place"; (2) the new memory is failed to allocate and the old memory is returned; or (3) allocate a new memory block, copy data, and free the original one. Particularly, `realloc(0)` implies a memory free and can potentially cause dangling pointers. 
 
-`malloc(0)`: `void* malloc (size_t size)` [**malloc**](https://cplusplus.com/reference/cstdlib/malloc/?kw=malloc) If size is zero, **the return value depends on the particular library implementation** (it may or may not be a null pointer), but the returned pointer shall not be dereferenced. If size is below zero, the function fails to allocate the requested block of memory and a null pointer is returned. 
+`malloc(0)`: If size is zero in [void* malloc (size_t size)](https://cplusplus.com/reference/cstdlib/malloc/?kw=malloc), **the return value depends on the particular library implementation** (it may or may not be a null pointer), but the returned pointer shall not be dereferenced. If size is below zero, the function fails to allocate the requested block of memory and a null pointer is returned. 
 
 
 `resize(0)`: free the whole vector.
