@@ -1,0 +1,2 @@
+aux_source_directory(. borrowed_reference_checker)
+add_library(borrowed_reference_checker ${borrowed_reference_checker})

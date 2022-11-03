@@ -1,0 +1,93 @@
+CheckerEnable
+{
+	TemplateChecker = true
+	CallGraphChecker = true
+	SplitBasicBlockwithFunCall = true
+	stack_uaf_checker = true
+	immediate_uaf_checker = true
+	loop_doublefree_checker = true
+	PointToAnalysis = true
+	borrowed_reference_checker = true
+	realloc_checker = true
+	memory_alloc_checker = true
+}
+
+PrintLog
+{
+	level = 5
+	TemplateChecker = false
+	stack_uaf_checker = true
+	immediate_uaf_checker = true
+	loop_doublefree_checker = true
+	borrowed_reference_checker = true
+	realloc_checker = true
+	memory_alloc_checker = true
+}
+
+Framework
+{
+	queue_size = 600
+}
+
+TemplateChecker
+{
+	request_fun = 2
+}
+
+CFG
+{
+	SplitBasicBlockwithFunCall = true
+	SplitBasicBlockwithCXXNew = false
+	SplitBasicBlockwithCXXConstruct = false
+}
+
+CallGraph
+{
+	showDestructor = true
+	showFunctionPtr = true
+	showLambda = true
+	inlineAndTemplate = true
+	showLibFunc = true
+	ignoreNoCalledSystemHeader = false
+	printToConsole =false
+}
+
+P2A
+{
+	
+}
+stack_uaf_checker
+{
+
+}
+
+immediate_uaf_checker
+{
+    checkDepth = 2
+}
+
+loop_doublefree_checker
+{
+
+}
+borrowed_reference_checker
+{
+	GetBorrowedRefFunctions = PyTuple_GetItem PyList_GetItem PyList_GET_ITEM PySequence_Fast_GET_ITEM
+	CheckFunctions = Py_INCREF Py_XINCREF _Py_XINCREF PyTuple_Check PyUnicode_Check PyList_Check PyBytes_Check PyLong_Check PyTuple_Check ob_type))->tp_flags & ((1UL << 25))) != 0)
+	SkipedFunctions = Element_Check raise_type_error  PyTuple_GET_SIZE encoder_encode_key_value assert PyType_Check  PyDict_GetItemIdWithError  PyList_Size  PyBytes_Size  PyArg_ParseTuple
+}
+realloc_checker
+{
+
+}
+
+memory_alloc_checker
+{
+	
+}
+pathToReport
+{
+	path = ./
+}
+
+

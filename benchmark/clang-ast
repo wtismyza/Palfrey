@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+
+# ===-- klee-clang --------------------------------------------------------===##
+# 
+#                      The KLEE Symbolic Virtual Machine
+# 
+#  This file is distributed under the University of Illinois Open Source
+#  License. See LICENSE.TXT for details.
+# 
+# ===----------------------------------------------------------------------===##
+
+import os, sys
+import subprocess
+import re
+
+CLANGPATH="/home/razzer/Public/llvm-project/install/bin/"
+if "CLANG_PATH" in os.environ:
+    CLANGPATH = os.getenv("CLANG_PATH")
+
+if not os.path.exists(CLANGPATH):
+    CLANGPATH = ""
+
+def isLinkCommand():
+    # Look for '-Wl,' as a signal that we are calling the linker. What a hack.
+    for arg in sys.argv:
+        if arg.startswith('-Wl,'):
+            return True
+
+def main():
+    dirName = "hwAnalysis"
+    astFileName = "astList.txt"
+    llvmConfigPath = os.path.join(CLANGPATH, "llvm-config")
+    if not os.path.isdir(dirName):
+        os.mkdir(dirName)
+    llvm_path = subprocess.Popen([llvmConfigPath, "--bindir"], stdout=subprocess.PIPE).communicate()[0].strip().decode("utf-8")
+    argv = []
+    tmpargv = []
+    # the following two lines fix an error about escape character. I don't know why.
+    # example:  cflow
+    ifOutput = False
+    for arg in sys.argv:
+        if arg.startswith('-D'):
+            argv.append(arg.replace("\"", "\""))
+        else:
+            argv.append(arg)
+        if ifOutput:
+            ifOutput = False
+            tmpargv.append(dirName + "/" + os.path.basename(arg) + ".ast")
+        else:
+            tmpargv.append(arg)
+
+        if arg == "-o":
+            ifOutput = True
+    tmpArgv = " ".join(argv)
+    astArgv = " ".join(argv[1:])
+    m = re.search('-o (\S+)', astArgv)                                                                           
+    output = ""
+    if m and m.group(1):
+        output = m.group(1)
+    if output != "":
+        astArgv = astArgv.replace("-o " + output, "-o " + dirName + "/" + os.path.basename(output) + ".ast")
+    clangver =  "clang"
+    if "c++" in tmpArgv or ".cpp" in tmpArgv:
+        clangver = "clang++"
+    astArgv = llvm_path+"/"+clangver + " -emit-ast " + astArgv
+    if not isLinkCommand():
+        # when compiling
+        # subprocess.call(astArgv, shell=True)
+        # os.spawnvp(os.P_WAIT, llvm_path+"/"+clangver, ["-emit-ast"] + tmpargv[1:])
+        tmpargv = [llvm_path+"/"+clangver]+["-emit-ast"]+tmpargv[1:]
+        subprocess.check_output(tmpargv)
+        #os.system(astArgv)
+        if os.path.exists(astFileName):
+            os.remove(astFileName)
+    else:
+        # when linking
+        if not os.path.exists(astFileName):
+            subprocess.call("find -path \"*/" + dirName + "/*\" -name \"*.ast\" > " + astFileName, shell=True)
+    # os.execvp(llvm_path+"/clang", ["-emit-ast"] + argv[1:])
+    print(argv)
+    os.execvp(llvm_path+"/"+clangver, [clangver]+argv[1:])
+
+    return 1
+
+if __name__ == '__main__':
+    main()
