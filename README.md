@@ -10,7 +10,7 @@ Our tool includes a framework for Abstract Syntax Tree (AST) and Control Flow Gr
     4. `realloc_checker`: checks if size == 0 is called when calling `realloc(p, size)`. (minor adjustment to report `resize(0)`, too many FP in `resize(0)` though.)
     5. `borrowed_reference_checker`: reports unsafe borrowed reference errors in Cpython.
     6. `memory_alloc_checker`: detect `malloc(0)` and `calloc(0, size_t size)`. `malloc(0)` could be problematic when it returns a valid address. This checker is recommended off in [config.txt](./tests/config.txt). 
-    7. other API errors: those APIs are application-specific, for example, [array.fromstring in CPython](https://bugs.python.org/issue24613) and [PySlice_GetIndicesEx in CPython](https://bugs.python.org/issue27867).
+    7. other API errors: those APIs are application-specific, for example, [array.fromstring in CPython](https://bugs.python.org/issue24613) and [PySlice_GetIndicesEx in CPython](https://bugs.python.org/issue27867). (this checker may not be useful for general purpose, and it will be uploaded with its benchmark code.)
     
 2.  Other functions:
 
